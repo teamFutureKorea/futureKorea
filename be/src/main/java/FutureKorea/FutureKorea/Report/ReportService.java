@@ -11,6 +11,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReportService {
@@ -22,12 +26,24 @@ public class ReportService {
     private ReportRepository reportRepository;
 
     private String[] Types = new String[] {"RESREPORT", "BRIEF", "COLUMN", "THINKING"};
-    public void getReport(String searchTitle) throws Exception {
-        initReportData();
-        // List<MealDTO> resultMapList = new ArrayList<>();
+    public Map<String, List<ReportResponseDTO>> getReport(String searchTitle) throws Exception {
+        Map<String, List<ReportResponseDTO>> resultMapList = new HashMap<>();
+
+        for(String type : Types){
+            resultMapList.put(type, new ArrayList<>());
+        }
+
+        List<Report> reports = reportRepository.findByTitleContaining(searchTitle);
+
+        for(int i = 0; i < reports.size(); i++){
+            Report report = reports.get(i);
+            resultMapList.get(Types[report.getType()]).add(new ReportResponseDTO(report));
+        }
+
+        return resultMapList;
     }
 
-    private void initReportData() throws Exception {
+    public void initReportData() throws Exception {
 
         for(int type = 0; type < 4; type++){
             // URL생성기
