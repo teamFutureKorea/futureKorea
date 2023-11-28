@@ -26,6 +26,7 @@ public class ReportService {
     private ReportRepository reportRepository;
 
     private String[] Types = new String[] {"RESREPORT", "BRIEF", "COLUMN", "THINKING"};
+
     public Map<String, List<ReportResponseDTO>> getReport(String searchTitle) throws Exception {
         Map<String, List<ReportResponseDTO>> resultMapList = new HashMap<>();
 
@@ -38,6 +39,19 @@ public class ReportService {
         for(int i = 0; i < reports.size(); i++){
             Report report = reports.get(i);
             resultMapList.get(Types[report.getType()]).add(new ReportResponseDTO(report));
+        }
+
+        return resultMapList;
+    }
+
+    public List<ReportResponseDTO> getTypeReport(String searchTitle, int type) throws Exception {
+        List<ReportResponseDTO> resultMapList = new ArrayList<>();
+
+        List<Report> reports = reportRepository.findByTitleContainingAndType(searchTitle, type);
+
+        for(int i = 0; i < reports.size(); i++){
+            Report report = reports.get(i);
+            resultMapList.add(new ReportResponseDTO(report));
         }
 
         return resultMapList;
