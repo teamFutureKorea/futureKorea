@@ -1,0 +1,25 @@
+{
+  "short_name": "미래한국",
+  "name": "미래한국",
+  "icons": [
+    {
+      "src": "./icons/mstile-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/mstile-150x150.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/mstile-310x310.png",
+      "sizes": "310x310",
+      "type": "image/png"
+    }
+  ],
+   "start_url": ".",
+    "display": "fullscreen",
+    "theme_color": "#000000",
+    "background_color": "#D1DEE4"
+}
