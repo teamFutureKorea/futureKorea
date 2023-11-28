@@ -1,0 +1,123 @@
+@charset "utf-8";
+
+/* 웹폰트 설정 */
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&family=Oswald:wght@200;300;400;500;600;700&display=swap");
+/*
+font-family: 'Lato', sans-serif;
+Thin 100
+Light 300
+Regular 400
+Bold 700
+Black 900
+font-family: 'Oswald', sans-serif;
+Extra-light 200
+Light 300
+Regular 400
+Medium 500
+Semi-bold 600
+Bold 700
+*/
+
+/* ROOT */
+:root {
+  --dark-color: #1d1f24;
+  --dark-opacity4-color: rgba(0, 0, 0, 0.4);
+  --dark-opacity7-color: rgba(0, 0, 0, 0.7);
+  --light-color: #fff;
+  --light-gray-color: #f2f3f6;
+  --light-opacity7-color: rgba(255, 255, 255, 0.7);
+  --light-opacity2-color: rgba(255, 255, 255, 0.2);
+  --light-opacity3-color: rgba(255, 255, 255, 0.3);
+}
+
+/* reset */
+html,body,#root{
+  width: 100%;
+  height: 100%;
+}
+html {
+  font-size: 62.5%;
+}
+body,
+input {
+  font-family: "Lato", sans-serif;
+}
+body {
+  margin: 0;
+  color: var(--dark-color);
+}
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  font-weight: normal;
+  margin: 0;
+}
+dl,
+dd,
+p {
+  margin: 0;
+}
+button,
+input {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+	border-radius: 0;
+}
+button {
+  cursor: pointer;
+}
+em {
+  font-style: normal;
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #1d1f24;
+}
+a:hover,
+a:focus {
+  color: #1d1f24;
+  text-decoration: none;
+}
+img {
+  vertical-align: top;
+}
+fieldset {
+  border: 0 none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 공통 */
+.hidden-txt,
+legend {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  color: rgba(0, 0, 0, 0);
+}
+.hide {
+  display: none !important;
+}
+
+/* Oswald 폰트 설정 */
+.card .category,
+.keyvisual .title,
+.storys .title,
+.storys a:before,
+.leading .title,
+.leading .link,
+.footer .sitemap a,
+.footer .connects button,
+.gnb a {
+  font-family: "Oswald", sans-serif;
+}
