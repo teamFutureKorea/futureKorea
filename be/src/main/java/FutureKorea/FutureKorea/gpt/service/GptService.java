@@ -39,7 +39,7 @@ public class GptService {
             // 대괄호 안의 값들을 리스트로 추출
             String valuesString = matcher.group(1);
             for (String value : valuesString.split(", ")) {
-                valuesList.add(value.replace("\"", "");
+                valuesList.add(value.replace("\"", ""));
             }
         }
     }
