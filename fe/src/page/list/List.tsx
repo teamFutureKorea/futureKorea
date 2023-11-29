@@ -30,6 +30,7 @@ const List = () => {
       </TitleBox>
       <ListItemBox>
         {
+          data ? 
           data.map((e,idx)=><ListItem key={idx}>
             <ListItemTitle>{e.title}</ListItemTitle>
             <ListItemTagBox>
@@ -38,7 +39,7 @@ const List = () => {
               <ListItemTag>#기업가</ListItemTag>
             </ListItemTagBox>
             <ListItemDate>{e.regDttm}</ListItemDate>
-          </ListItem>)
+          </ListItem>) : null
         }
       </ListItemBox>
     </Container>

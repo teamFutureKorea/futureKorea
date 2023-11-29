@@ -16,7 +16,7 @@ const Header = () => {
     setIsSearch(e=>false)
     e.target.value="";
     navigate("/list");
-  },[searchKeyword,dispatch])
+  },[searchKeyword,dispatch,navigate])
 
   return (
     <Container $isOpen={isSearch}>
