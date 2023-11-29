@@ -1,2 +1,2 @@
-/auth/* https://www.futurekorea.kro.kr/auth/:param 200
+/auth/* https://www.futurekorea.kro.kr/auth/:splash 200
 /* /index.html 200
