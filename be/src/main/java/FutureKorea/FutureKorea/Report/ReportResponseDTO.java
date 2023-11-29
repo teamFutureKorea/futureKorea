@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class ReportResponseDTO {
+    private Long report_id;
     private String title;
     private String writer;
     private String regDttm;
@@ -18,6 +19,7 @@ public class ReportResponseDTO {
     private List<String> keywords;
 
     public ReportResponseDTO(Report report){
+        this.report_id = report.getId();
         this.title = report.getTitle();
         this.writer = report.getWriter();
         this.regDttm = report.getRegDttm();
