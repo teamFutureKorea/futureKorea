@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -124,4 +125,18 @@ public class GptService {
 
         return new SummaryDto(summary);
     }
+
+    public List<String> getTopKeyword() {
+        List<Object[]> topKeywords = keywordRepository.findTop20ByOrderByCntDesc();
+        List<String> topKeywordDtos = new ArrayList<>();
+
+        for (Object[] row : topKeywords) {
+            // 첫 번째 열이 keyword, 두 번째 열이 count
+            String keyword = (String) row[0];
+            topKeywordDtos.add(keyword);
+        }
+
+        return topKeywordDtos;
+    }
+
 }
