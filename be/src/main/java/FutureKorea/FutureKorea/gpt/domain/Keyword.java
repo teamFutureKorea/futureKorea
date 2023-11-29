@@ -1,5 +1,6 @@
 package FutureKorea.FutureKorea.gpt.domain;
 
+import FutureKorea.FutureKorea.Report.Report;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +18,8 @@ public class Keyword {
 
     private String keyword;
 
-//    @ManyToOne
-//    @JoinColumn(name = "center_no")
-//    private Center center;
+    @ManyToOne
+    @JoinColumn(name = "report_id")
+    private Report report;
 }
 
