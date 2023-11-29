@@ -1,106 +1,45 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { styled } from 'styled-components'
 
+interface Report{
+  "title": String,
+  "writer": String,
+  "regDttm": String,
+  "detailUrl": String,
+  "type": String
+}
+
 const List = () => {
+  const [data,setData] = useState<Report[]>([]);
+  const [title,setTitle] = useState<String>("resreport");
+  const search = useSelector((state:{Search:{searchKeyword:String}})=>state.Search.searchKeyword);
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_BACKEND}/report/${title}?title=${search}`)
+      .then(({data})=>setData(data.data))
+      .catch(err=>console.log(err))
+  },[title,search])
   return (
     <Container>
-      <TitleBox>
-        <option>미래 연구 보고서</option>
-        <option>미래심층분석</option>
-        <option>미래칼럼</option>
-        <option>미래생각</option>
+      <TitleBox onChange={(e)=>setTitle(e.target.value)}>
+        <option value={"resreport"}>미래 연구보고서</option>
+        <option value={"brief"}>미래 심층분석</option>
+        <option value={"column"}>미래 칼럼</option>
+        <option value={"thinking"}>미래 생각</option>
       </TitleBox>
       <ListItemBox>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[박성준] 스테이블코인의 관리·감독 방안 고민할 때</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#스테이블 코인</ListItemTag>
-            <ListItemTag>#관리</ListItemTag>
-            <ListItemTag>#감독</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
-        <ListItem>
-          <ListItemTitle>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</ListItemTitle>
-          <ListItemTagBox>
-            <ListItemTag>#성공</ListItemTag>
-            <ListItemTag>#누리호</ListItemTag>
-            <ListItemTag>#기업가</ListItemTag>
-          </ListItemTagBox>
-          <ListItemDate>2022-11-30</ListItemDate>
-        </ListItem>
+        {
+          data.map((e,idx)=><ListItem key={idx}>
+            <ListItemTitle>{e.title}</ListItemTitle>
+            <ListItemTagBox>
+              <ListItemTag>#성공</ListItemTag>
+              <ListItemTag>#누리호</ListItemTag>
+              <ListItemTag>#기업가</ListItemTag>
+            </ListItemTagBox>
+            <ListItemDate>{e.regDttm}</ListItemDate>
+          </ListItem>)
+        }
       </ListItemBox>
     </Container>
   )

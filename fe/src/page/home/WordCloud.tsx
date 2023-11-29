@@ -46,7 +46,7 @@ const WordCloud: React.FC<{ keywords: d3.SimulationNodeDatum[] }> = ({
         alert(d.target.textContent);
       });
 
-    const simulation = d3
+    d3
       .forceSimulation(wordsData)
       .force(
         "collide",

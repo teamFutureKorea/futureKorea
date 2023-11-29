@@ -1,18 +1,22 @@
 import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
+import { setSearch } from '../../redux/actions/SearchAction';
 
 const Header = () => {
   const [isSearch,setIsSearch] = useState(false);
   const [searchKeyword,setSearchKeyword] = useState("");
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   //TODO : 검색
   const handleSearch = useCallback((e:any)=>{
-    console.log(searchKeyword);
+    dispatch(setSearch(searchKeyword));
     setSearchKeyword("");
     setIsSearch(e=>false)
     e.target.value="";
-  },[searchKeyword])
+    navigate("/list");
+  },[searchKeyword,dispatch])
 
   return (
     <Container $isOpen={isSearch}>
