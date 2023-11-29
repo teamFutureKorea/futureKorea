@@ -4,11 +4,11 @@ import FutureKorea.FutureKorea.Report.Report;
 import FutureKorea.FutureKorea.Report.ReportRepository;
 import FutureKorea.FutureKorea.gpt.config.ChatGptConfig;
 import FutureKorea.FutureKorea.gpt.domain.Keyword;
-import FutureKorea.FutureKorea.gpt.dto.ChatGptRequestDto;
-import FutureKorea.FutureKorea.gpt.dto.ChatGptResponseDto;
-import FutureKorea.FutureKorea.gpt.dto.QuestionRequestDto;
-import FutureKorea.FutureKorea.gpt.dto.ContentDto;
+import FutureKorea.FutureKorea.gpt.domain.Summary;
+import FutureKorea.FutureKorea.gpt.dto.*;
 import FutureKorea.FutureKorea.gpt.repository.KeywordRepository;
+import FutureKorea.FutureKorea.gpt.repository.SummaryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,7 +29,9 @@ public class GptService {
 
     private static RestTemplate restTemplate = new RestTemplate();
     private final KeywordRepository keywordRepository;
+    private final SummaryRepository summaryRepository;
     private final ReportRepository reportRepository;
+    @Transactional
     public void createKeyword(ContentDto contentDto) {
         Report report = reportRepository.findById(contentDto.getReportId()).orElse(null);
 
@@ -38,6 +40,7 @@ public class GptService {
         ChatGptResponseDto chatGptResponseDto = askQuestion(requestDto);
         String inputText = chatGptResponseDto.getChoices().get(0).getText();
 
+        System.out.println(inputText);
         // 정규표현식 패턴 설정
         Pattern pattern = Pattern.compile("\\[(.*?)\\]");
 
@@ -47,9 +50,9 @@ public class GptService {
         if (matcher.find()) {
             // 대괄호 안의 값들을 리스트로 추출
             String valuesString = matcher.group(1);
-            Keyword keyword = new Keyword();
             for (String value : valuesString.split(", ")) {
                 valuesList.add(value.replace("\"", ""));
+                Keyword keyword = new Keyword();
                 keyword.setKeyword(value.replace("\"", ""), report);
                 keywordRepository.save(keyword);
             }
@@ -87,28 +90,38 @@ public class GptService {
         );
     }
 
-    public Object getKeyword(Long columnNo) {
-        return keywordRepository.findByReportId(columnNo);
+    @Transactional
+    public List<String> getKeyword(Long columnId) {
+//        Report report = reportRepository.findById(columnId).orElse(null);
+        List<String> keywordDtos = new ArrayList<>();
+        List<Keyword> keywords = keywordRepository.findByReportId(columnId);
+        for(Keyword keyword : keywords){
+            keywordDtos.add(keyword.getKeyword());
+        }
+        return keywordDtos;
     }
 
-//    public void createSummary(ContentDto contentDto) {
-//        QuestionRequestDto requestDto = new QuestionRequestDto();
-//        requestDto.setQuestion(contentDto.getContent() + "\n\n 위 내용을 다섯문장으로 요약해서 한 문단으로 줘.. ");
-//        ChatGptResponseDto chatGptResponseDto = askQuestion(requestDto);
-//        String inputText = chatGptResponseDto.getChoices().get(0).getText();
-//
-//        // 정규표현식 패턴 설정
-//        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
-//
-//        // 입력 텍스트에서 매칭되는 부분 찾기
-//        Matcher matcher = pattern.matcher(inputText);
-//        List<String> valuesList = new ArrayList<>();
-//        if (matcher.find()) {
-//            // 대괄호 안의 값들을 리스트로 추출
-//            String valuesString = matcher.group(1);
-//            for (String value : valuesString.split(", ")) {
-//                valuesList.add(value.replace("\"", ""));
-//            }
-//        }
-//    }
+    @Transactional
+    public void createSummary(ContentDto contentDto) {
+        Report report = reportRepository.findById(contentDto.getReportId()).orElse(null);
+
+        QuestionRequestDto requestDto = new QuestionRequestDto();
+        requestDto.setQuestion(contentDto.getContent() + "\n\n 위 내용을 다섯문장으로 요약해서 한 문단으로 줘.");
+        ChatGptResponseDto chatGptResponseDto = askQuestion(requestDto);
+        String inputText = chatGptResponseDto.getChoices().get(0).getText();
+
+        System.out.println(inputText);
+        Summary summary = new Summary();
+        summary.setSummary(inputText, report);
+        summaryRepository.save(summary);
+
+    }
+
+    @Transactional
+    public SummaryDto getSummary(Long columnId) {
+        Summary summary = summaryRepository.findByReportId(columnId);
+//        Report report = reportRepository.findById(columnId).orElse(null);
+
+        return new SummaryDto(summary);
+    }
 }
