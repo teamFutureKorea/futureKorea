@@ -40,7 +40,7 @@ public class ReportController {
     public ResponseEntity<Map<String, Object>> getResReport(@RequestParam(value="title") String title){
         Map<String, Object> resultMap = new HashMap<String, Object>();
         try {
-            resultMap.put("data", listService.getTypeReport(title, 1));
+            resultMap.put("data", listService.getTypeReport(title, 0));
             resultMap.put("message", SUCCESS);
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
         } catch (Exception e) {
