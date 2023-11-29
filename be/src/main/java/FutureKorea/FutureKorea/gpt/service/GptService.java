@@ -5,6 +5,7 @@ import FutureKorea.FutureKorea.gpt.dto.ChatGptRequestDto;
 import FutureKorea.FutureKorea.gpt.dto.ChatGptResponseDto;
 import FutureKorea.FutureKorea.gpt.dto.QuestionRequestDto;
 import FutureKorea.FutureKorea.gpt.dto.ContentDto;
+import FutureKorea.FutureKorea.gpt.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 public class GptService {
 
     private static RestTemplate restTemplate = new RestTemplate();
+    private final KeywordRepository keywordRepository;
     public void createKeyword(ContentDto contentDto) {
         QuestionRequestDto requestDto = new QuestionRequestDto();
         requestDto.setQuestion(contentDto.getContent() + "\n\n 위 내용에서 키워드를 [] 리스트 안에다가 설명없이 단어로만 관련도 높은 순서대로 5개 넣어서 따옴표 없이 글자만 넣어서 리스트로 반환해줘. ");
@@ -72,5 +74,9 @@ public class GptService {
                         )
                 )
         );
+    }
+
+    public Object getKeyword(Long columnNo) {
+        return keywordRepository.findByReportId(columnNo);
     }
 }

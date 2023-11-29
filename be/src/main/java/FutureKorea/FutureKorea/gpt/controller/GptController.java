@@ -61,26 +61,21 @@ public class GptController {
 //        }
 //    }
 
-//    @GetMapping("/list/keyword")
-//    public ResponseEntity<Map<String, Object>> getExamMonthDayList(@ApiIgnore @RequestHeader String authorization,
-//                                                                   @PathVariable Long directorNo,
-//                                                                   @RequestParam int year, @RequestParam int month, @RequestParam(value = "day", defaultValue = "0") int day){
-//        Map<String, Object> resultMap = new HashMap<>();
-//        try{
-//            String token  = authorization.replace("Bearer ", "");
-//            String authority = jwtTokenProvider.getAuthority(token);
-//
-//            resultMap.put("message","시험을 성공적으로 조회했습니다.");
-//            resultMap.put("data", directorService.getExamMonthDayList(directorNo, year, month, day, authority));
-//            resultMap.put("code", HttpStatus.OK.value());
-//            resultMap.put("status", "success");
-//            return new ResponseEntity<>(resultMap, HttpStatus.OK);
-//        }catch (IllegalArgumentException e){
-//            resultMap.put("message", e.getMessage());
-//            resultMap.put("status", HttpStatus.BAD_REQUEST.value());
-//            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
-//        }
-//    }
+    @GetMapping("/list/keyword/{columnNo}")
+    public ResponseEntity<Map<String, Object>> getKeyword(@PathVariable("columnNo") Long columnNo) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            resultMap.put("data", gptService.getKeyword(columnNo));
+            resultMap.put("message", "키워드를 성공적으로 조회했습니다.");
+            resultMap.put("code", HttpStatus.OK.value());
+            resultMap.put("status", "success");
+            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            resultMap.put("message", e.getMessage());
+            resultMap.put("status", HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+    }
 //
 //    @GetMapping("/list/summary")
 //    public ResponseEntity<Map<String, Object>> getExamMonthDayList(@ApiIgnore @RequestHeader String authorization,
