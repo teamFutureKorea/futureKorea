@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/gpt")
+@RequestMapping("/gpt")
 public class GptController {
 
     private final GptService gptService;
