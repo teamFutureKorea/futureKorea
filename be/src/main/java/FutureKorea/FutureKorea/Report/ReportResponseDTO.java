@@ -3,6 +3,9 @@ package FutureKorea.FutureKorea.Report;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class ReportResponseDTO {
@@ -12,6 +15,8 @@ public class ReportResponseDTO {
     private String detailUrl;
     private String type;
 
+    private List<String> keywords;
+
     public ReportResponseDTO(Report report){
         this.title = report.getTitle();
         this.writer = report.getWriter();
@@ -20,5 +25,10 @@ public class ReportResponseDTO {
 
         String[] Types = new String[] {"RESREPORT", "BRIEF", "COLUMN", "THINKING"};
         this.type = Types[report.getType()];
+
+        this.keywords = new ArrayList<>();
+        for(int i = 0; i < report.getKeywords().size(); i++){
+            this.keywords.add(report.getKeywords().get(i).getKeyword());
+        }
     }
 }
