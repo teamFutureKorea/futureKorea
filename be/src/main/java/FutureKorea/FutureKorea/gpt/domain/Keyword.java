@@ -21,5 +21,10 @@ public class Keyword {
     @ManyToOne
     @JoinColumn(name = "report_id")
     private Report report;
+
+    public void setKeyword(String keyword, Report report){
+        this.keyword = keyword;
+        this.report = report;
+    }
 }
 
