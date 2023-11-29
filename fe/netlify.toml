@@ -1,5 +1,0 @@
-[[redirects]]
-from = "/auth/*"
-  to = "https://www.futurekorea.kro.kr/:splat"  
-  status = 200
-  force = true
