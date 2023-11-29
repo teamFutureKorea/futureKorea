@@ -1,18 +1,27 @@
 import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
+import { setSearch } from '../../redux/actions/SearchAction';
 
 const Header = () => {
   const [isSearch,setIsSearch] = useState(false);
   const [searchKeyword,setSearchKeyword] = useState("");
-
+  const dispatch = useDispatch();
   //TODO : 검색
   const handleSearch = useCallback((e:any)=>{
-    console.log(searchKeyword);
+    // const search = localStorage.getItem("search");
+    // if(!search||search===""){
+    //   localStorage.setItem("search",JSON.stringify([searchKeyword]));
+    // }else{
+    //   localStorage.setItem("search",JSON.stringify([...JSON.parse(search),searchKeyword]));
+    // }
+    
+    dispatch(setSearch(searchKeyword));
     setSearchKeyword("");
     setIsSearch(e=>false)
     e.target.value="";
-  },[searchKeyword])
+  },[searchKeyword,dispatch])
 
   return (
     <Container $isOpen={isSearch}>
