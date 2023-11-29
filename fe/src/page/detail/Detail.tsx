@@ -48,13 +48,13 @@ const Detail = () => {
   const comments = useMemo(()=>{
     if(!commentList||commentList.length===0) return [];
     return commentList.map((e : Comment,idx:number)=>
-      <Comment key={idx}>
+      <CommentWrap key={idx}>
         <CommentProfile>
           <CommentProfileimg src={e.imageUrl} alt="프로필 사진"/>
           <CommentProfilename>{e.nickname}</CommentProfilename>
         </CommentProfile>
         <CommentContent>{e.content}</CommentContent>
-      </Comment>
+      </CommentWrap>
     )
   },[commentList]);
 
@@ -105,7 +105,7 @@ const Detail = () => {
     </Container>
   );
 };
-const Comment = styled.div`
+const CommentWrap = styled.div`
   display: flex;
   gap: 1rem;
   box-sizing: border-box;
