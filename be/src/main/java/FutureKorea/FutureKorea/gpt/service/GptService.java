@@ -1,11 +1,14 @@
 package FutureKorea.FutureKorea.gpt.service;
 
+import FutureKorea.FutureKorea.Report.Report;
+import FutureKorea.FutureKorea.Report.ReportRepository;
 import FutureKorea.FutureKorea.gpt.config.ChatGptConfig;
-import FutureKorea.FutureKorea.gpt.dto.ChatGptRequestDto;
-import FutureKorea.FutureKorea.gpt.dto.ChatGptResponseDto;
-import FutureKorea.FutureKorea.gpt.dto.QuestionRequestDto;
-import FutureKorea.FutureKorea.gpt.dto.ContentDto;
+import FutureKorea.FutureKorea.gpt.domain.Keyword;
+import FutureKorea.FutureKorea.gpt.domain.Summary;
+import FutureKorea.FutureKorea.gpt.dto.*;
 import FutureKorea.FutureKorea.gpt.repository.KeywordRepository;
+import FutureKorea.FutureKorea.gpt.repository.SummaryRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,12 +29,18 @@ public class GptService {
 
     private static RestTemplate restTemplate = new RestTemplate();
     private final KeywordRepository keywordRepository;
+    private final SummaryRepository summaryRepository;
+    private final ReportRepository reportRepository;
+    @Transactional
     public void createKeyword(ContentDto contentDto) {
+        Report report = reportRepository.findById(contentDto.getReportId()).orElse(null);
+
         QuestionRequestDto requestDto = new QuestionRequestDto();
         requestDto.setQuestion(contentDto.getContent() + "\n\n 위 내용에서 키워드를 [] 리스트 안에다가 설명없이 단어로만 관련도 높은 순서대로 5개 넣어서 따옴표 없이 글자만 넣어서 리스트로 반환해줘. ");
         ChatGptResponseDto chatGptResponseDto = askQuestion(requestDto);
         String inputText = chatGptResponseDto.getChoices().get(0).getText();
 
+        System.out.println(inputText);
         // 정규표현식 패턴 설정
         Pattern pattern = Pattern.compile("\\[(.*?)\\]");
 
@@ -42,8 +52,12 @@ public class GptService {
             String valuesString = matcher.group(1);
             for (String value : valuesString.split(", ")) {
                 valuesList.add(value.replace("\"", ""));
+                Keyword keyword = new Keyword();
+                keyword.setKeyword(value.replace("\"", ""), report);
+                keywordRepository.save(keyword);
             }
         }
+
     }
 
     public HttpEntity<ChatGptRequestDto> buildHttpEntity(ChatGptRequestDto requestDto) {
@@ -76,7 +90,38 @@ public class GptService {
         );
     }
 
-    public Object getKeyword(Long columnNo) {
-        return keywordRepository.findByReportId(columnNo);
+    @Transactional
+    public List<String> getKeyword(Long columnId) {
+//        Report report = reportRepository.findById(columnId).orElse(null);
+        List<String> keywordDtos = new ArrayList<>();
+        List<Keyword> keywords = keywordRepository.findByReportId(columnId);
+        for(Keyword keyword : keywords){
+            keywordDtos.add(keyword.getKeyword());
+        }
+        return keywordDtos;
+    }
+
+    @Transactional
+    public void createSummary(ContentDto contentDto) {
+        Report report = reportRepository.findById(contentDto.getReportId()).orElse(null);
+
+        QuestionRequestDto requestDto = new QuestionRequestDto();
+        requestDto.setQuestion(contentDto.getContent() + "\n\n 위 내용을 다섯문장으로 요약해서 한 문단으로 줘.");
+        ChatGptResponseDto chatGptResponseDto = askQuestion(requestDto);
+        String inputText = chatGptResponseDto.getChoices().get(0).getText();
+
+        System.out.println(inputText);
+        Summary summary = new Summary();
+        summary.setSummary(inputText, report);
+        summaryRepository.save(summary);
+
+    }
+
+    @Transactional
+    public SummaryDto getSummary(Long columnId) {
+        Summary summary = summaryRepository.findByReportId(columnId);
+//        Report report = reportRepository.findById(columnId).orElse(null);
+
+        return new SummaryDto(summary);
     }
 }

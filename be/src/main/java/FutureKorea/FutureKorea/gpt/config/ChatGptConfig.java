@@ -3,7 +3,7 @@ package FutureKorea.FutureKorea.gpt.config;
 public class ChatGptConfig {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer ";
-    public static final String API_KEY = "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";
+    public static final String API_KEY = "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";
     public static final String MODEL = "text-davinci-003";
     public static final Integer MAX_TOKEN = 300;
     public static final Double TEMPERATURE = 0.0;
