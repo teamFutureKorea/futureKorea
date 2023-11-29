@@ -1,45 +1,87 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
+import { Report } from "../list/List";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import { UserType } from "../../redux/type";
+
+interface Comment{
+  nickname : string,
+  imageUrl : string,
+  reportId : number,
+  content : string
+}
 
 const Detail = () => {
   const [searchKeyword,setSearchKeyword] = useState("");
+  const [content,setContent] = useState<String>("요약문이 없습니다.");
+  const report : Report = useLocation().state?.report;
+  const user = useSelector((state: { User: { user: UserType } }) => state.User.user);
+  const [commentList,setCommentList] = useState<Comment[]>([]);
 
-  //TODO : 검색
-  const handleComment = useCallback((e:any)=>{
-    console.log(searchKeyword);
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_BACKEND}/gpt/list/summary/${report.report_id}`)
+      .then(({data})=>setContent(data.data.summary))
+      .catch(err=>console.log(err));
+  },[report]);
+  
+  //TODO : 댓글달기
+  const handleComment = useCallback(()=>{
+    axios.post(`${process.env.REACT_APP_BACKEND}/comment`,{
+      nickname : user.nickname,
+      imageUrl : user.imageUrl,
+      reportId : report.report_id,
+      content : searchKeyword
+    }).then(res=>{
+      axios.get(`${process.env.REACT_APP_BACKEND}/comment/${report.report_id}`)
+        .then(({data})=>setCommentList(data.data))
+        .catch(err=>console.log(err))
+    })
     setSearchKeyword("");
-    e.target.value="";
-  },[searchKeyword])
+  },[searchKeyword,report,user])
+
+  const handleLink = useCallback((url:string)=>{
+    window.open(url);
+  },[])
+
+  const comments = useMemo(()=>{
+    if(!commentList||commentList.length===0) return [];
+    return commentList.map((e : Comment,idx:number)=>
+      <Comment key={idx}>
+        <CommentProfile>
+          <CommentProfileimg src={e.imageUrl} alt="프로필 사진"/>
+          <CommentProfilename>{e.nickname}</CommentProfilename>
+        </CommentProfile>
+        <CommentContent>{e.content}</CommentContent>
+      </Comment>
+    )
+  },[commentList]);
+
   return (
     <Container>
       <TitleBox>
-        <Title>[성문주] 누리호 성공, 기업가 정신 확산 계기 되기를</Title>
+        <Title>{report.title}</Title>
         <TitleTagBox>
-          <TitleTag>#성공</TitleTag>
-          <TitleTag>#누리호</TitleTag>
-          <TitleTag>#기업가</TitleTag>
+          {
+            report.keywords.map((e,idx)=><TitleTag key={idx}>#{e}</TitleTag>)
+          }
         </TitleTagBox>
-        <TitleDate>2022-11-30</TitleDate>
+        <TitleDate>{report.regDttm}</TitleDate>
       </TitleBox>
       <ContentBox>
-        누리호의 성공은 우리나라가 독자기술을 활용하여 세계에서 7번째로
-        실용위성을 발사한 성과를 나타냅니다. 이 성공은 기업가정신의 중요성을
-        강조하며, 위험을 감수하고 계속해서 도전함으로써 새로운 영역에서 가치를
-        창출하는 데 성공한 결과입니다. 현재 우리 사회에서는 기업가정신이 충분히
-        발현되지 못하고 있으며, 기업가정신을 향상시키기 위해 교육 및 문화적인
-        변화가 필요합니다. 불확실성 회피 경향이 강한 문화에서는 새로운 도전과
-        혁신이 어려울 수 있으며, 이를 극복하기 위한 종합적인 정책방안이
-        필요합니다. 미래에는 기업가정신이 더욱 활발히 발현되어 사회적 가치를
-        창출하는 데 기여하길 기대합니다.
+        {
+          content
+        }
       </ContentBox>
-      <LinkButton>원본링크</LinkButton>
-      <HeadTitle>관련 발의 법안</HeadTitle>
+      <LinkButton onClick={()=>handleLink(report.detailUrl)}>원본링크</LinkButton>
+      {/* <HeadTitle>관련 발의 법안</HeadTitle>
       <TitleBox>
         <Title>우주개발 진흥법 일부개정법률안</Title>
         <TitleTagBox>김민석 외 15인</TitleTagBox>
         <TitleDate>2022-11-30</TitleDate>
       </TitleBox>
-      <LinkButton>원본링크</LinkButton>
+      <LinkButton>원본링크</LinkButton> */}
       <HeadTitle>소통</HeadTitle>
       <ContentBox>
         <CommentInputBox>
@@ -48,20 +90,43 @@ const Detail = () => {
             <div className="hidden-txt">검색</div>
           </CommentBtn>
           <CommentInput
+            value={searchKeyword}
             onKeyDown={(e) => {
               if (e.code === "Enter") {
-                handleComment(e);
+                handleComment();
               }
             }}
             onChange={(e) => setSearchKeyword(e.target.value)}
-            placeholder="검색어를 입력해주세요"
+            placeholder="댓글을를 입력해주세요"
           />
         </CommentInputBox>
-        
+        {comments}
       </ContentBox>
     </Container>
   );
 };
+const Comment = styled.div`
+  display: flex;
+  gap: 1rem;
+  box-sizing: border-box;
+  padding: 10px;
+  border-bottom: 1px solid #000;
+`
+const CommentProfile = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+const CommentProfileimg = styled.img`
+  width: 56px;
+  height: 56px;
+  border-radius: 56px;
+`
+const CommentProfilename = styled.p`
+  font-weight: 900;
+`
+const CommentContent = styled.div`
+`
 
 const CommentInput = styled.input`
   width: 100%;
@@ -118,34 +183,28 @@ const ContentBox = styled.div`
 `;
 const TitleBox = styled.div`
   width: 100%;
-  height: 70px;
-  flex-shrink: 0;
-  background-color: #fff;
+  background-color: #FFF;
   -webkit-box-shadow: 3px 0px 24px -8px rgba(66, 68, 90, 1);
   -moz-box-shadow: 3px 0px 24px -8px rgba(66, 68, 90, 1);
   box-shadow: 3px 0px 24px -8px rgba(66, 68, 90, 1);
   box-sizing: border-box;
   padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  white-space: nowrap;
-  gap: 5px;
 `;
 
 const Title = styled.div`
   width: 100%;
-  height: 50%;
   font-size: 15px;
   font-weight: 900;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  box-sizing: border-box;
+  padding: 10px;
 `;
 const TitleTagBox = styled.div`
-  flex-grow: 1;
-  height: 50%;
+  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
 `;
 const TitleTag = styled.div`
   box-sizing: border-box;
@@ -159,8 +218,10 @@ const TitleTag = styled.div`
 `;
 
 const TitleDate = styled.div`
-  width: 60px;
-  height: 50%;
+  text-align: right;
+  font-size: 12px;
+  padding-right: 10px;
+  box-sizing: border-box;
 `;
 
 const Container = styled.div`

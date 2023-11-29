@@ -1,5 +1,5 @@
 import Oauth from "./page/Oauth";
-import TEST from "./page/TEST";
+import Login from "./page/Login";
 import Detail from "./page/detail/Detail";
 import Home from "./page/home/Home";
 import List from "./page/list/List";
@@ -7,23 +7,28 @@ import List from "./page/list/List";
 const routes = [
   {
     path: "/",
-    component: Home,
+    component: <Home/>,
+    isLogin:true
   },
   {
     path:"/list",
-    component: List
+    component: <List/>,
+    isLogin:true
   },
   {
     path:"/detail/:id",
-    component:Detail
+    component:<Detail/>,
+    isLogin:true
   },
   {
-    path:"/test",
-    component:TEST
+    path:"/login",
+    component:<Login/>,
+    isLogin:false
   },
   {
     path:"/oauth",
-    component:Oauth
+    component:<Oauth/>,
+    isLogin:false
   }
 ];
 
