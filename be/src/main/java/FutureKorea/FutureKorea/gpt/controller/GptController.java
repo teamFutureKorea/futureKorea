@@ -89,5 +89,22 @@ public class GptController {
         }
     }
 
+    @GetMapping("/keyword/top")
+    public ResponseEntity<Map<String, Object>> getTopKeyword(){
+        Map<String, Object> resultMap = new HashMap<>();
+        try{
+            List<String> topKeywordDto = gptService.getTopKeyword();
+            resultMap.put("data", topKeywordDto);
+            resultMap.put("message", "요약을 성공적으로 조회했습니다.");
+            resultMap.put("code", HttpStatus.OK.value());
+            resultMap.put("status", "success");
+            return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            resultMap.put("message", e.getMessage());
+            resultMap.put("status", HttpStatus.BAD_REQUEST.value());
+            return new ResponseEntity<>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 }

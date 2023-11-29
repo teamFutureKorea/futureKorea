@@ -14,4 +14,8 @@ public interface KeywordRepository extends JpaRepository<Keyword, Long> {
     boolean existsById(Long id);
 //    @Query(value = "select kw.keyword from Keyword kw where (kw.report = :columnNo)")
     List<Keyword> findByReportId(@Param("columnId") Long columnId);
+
+
+    @Query(value = "SELECT k.keyword, COUNT(*) as cnt FROM Keyword k GROUP BY k.keyword ORDER BY cnt DESC LIMIT 20")
+    List<Object[]> findTop20ByOrderByCntDesc();
 }
