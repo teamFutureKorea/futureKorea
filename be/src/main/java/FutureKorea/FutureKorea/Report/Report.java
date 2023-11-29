@@ -1,10 +1,11 @@
 package FutureKorea.FutureKorea.Report;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import FutureKorea.FutureKorea.gpt.domain.Keyword;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +17,9 @@ public class Report {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+
+        @OneToMany(mappedBy = "report")
+        private List<Keyword> keywords = new ArrayList<>();
 
         private Integer type;
 

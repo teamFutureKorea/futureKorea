@@ -10,21 +10,21 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Keyword {
+public class Summary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String keyword;
+    @Column(length = 10000)
+    private String summary;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "report_id")
     private Report report;
 
-    public void setKeyword(String keyword, Report report){
-        this.keyword = keyword;
+    public void setSummary(String inputText, Report report) {
+        this.summary = inputText;
         this.report = report;
     }
 }
-
