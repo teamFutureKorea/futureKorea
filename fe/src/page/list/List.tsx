@@ -1,25 +1,33 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { styled } from 'styled-components'
 
-interface Report{
-  "title": String,
-  "writer": String,
-  "regDttm": String,
-  "detailUrl": String,
-  "type": String
+export interface Report{
+  "report_id":number
+  "title": string,
+  "writer": string,
+  "regDttm": string,
+  "detailUrl": string,
+  "type": string,
+  "keywords":string[]
 }
 
 const List = () => {
   const [data,setData] = useState<Report[]>([]);
-  const [title,setTitle] = useState<String>("resreport");
-  const search = useSelector((state:{Search:{searchKeyword:String}})=>state.Search.searchKeyword);
+  const [title,setTitle] = useState<string>("resreport");
+  const search = useSelector((state:{Search:{searchKeyword:string}})=>state.Search.searchKeyword);
+  const navigate = useNavigate();
   useEffect(()=>{
     axios.get(`${process.env.REACT_APP_BACKEND}/report/${title}?title=${search}`)
       .then(({data})=>setData(data.data))
       .catch(err=>console.log(err))
   },[title,search])
+
+  const handleListItem = useCallback((report:Report)=>{
+    navigate(`/detail/${report.report_id}`,{state:{report}})
+  },[navigate])
   return (
     <Container>
       <TitleBox onChange={(e)=>setTitle(e.target.value)}>
@@ -31,12 +39,12 @@ const List = () => {
       <ListItemBox>
         {
           data ? 
-          data.map((e,idx)=><ListItem key={idx}>
+          data.map((e,idx)=><ListItem onClick={()=>handleListItem(e)} key={idx}>
             <ListItemTitle>{e.title}</ListItemTitle>
             <ListItemTagBox>
-              <ListItemTag>#성공</ListItemTag>
-              <ListItemTag>#누리호</ListItemTag>
-              <ListItemTag>#기업가</ListItemTag>
+              {
+                e.keywords.map((el,idx2)=><ListItemTag key={idx2}>#{el}</ListItemTag>)
+              }
             </ListItemTagBox>
             <ListItemDate>{e.regDttm}</ListItemDate>
           </ListItem>) : null
@@ -58,7 +66,6 @@ const ListItemBox = styled.div`
 `
 const ListItem = styled.div`
   width: 100%;
-  height: 70px;
   flex-shrink: 0;
   background-color: #FFF;
   -webkit-box-shadow: 3px 0px 24px -8px rgba(66, 68, 90, 1);
@@ -66,26 +73,23 @@ const ListItem = styled.div`
   box-shadow: 3px 0px 24px -8px rgba(66, 68, 90, 1);
   box-sizing: border-box;
   padding: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  white-space: nowrap;
   gap: 5px;
 `
 const ListItemTitle = styled.div`
   width: 100%;
-  height: 50%;
   font-size: 15px;
   font-weight: 900;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  box-sizing: border-box;
+  padding: 10px;
 
 `
 const ListItemTagBox = styled.div`
-  flex-grow : 1;
-  height: 50%;
+  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
 `
 const ListItemTag = styled.div`
   box-sizing: border-box;
@@ -99,8 +103,10 @@ const ListItemTag = styled.div`
 `
 
 const ListItemDate = styled.div`
-  width: 60px;
-  height: 50%;
+  font-size: 12px;
+  text-align: right;
+  padding-right: 10px;
+  box-sizing: border-box;
 `
 
 const TitleBox = styled.select`

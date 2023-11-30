@@ -10,13 +10,12 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   //TODO : 검색
-  const handleSearch = useCallback((e:any)=>{
-    dispatch(setSearch(searchKeyword));
-    setSearchKeyword("");
-    setIsSearch(e=>false)
-    e.target.value="";
-    navigate("/list");
-  },[searchKeyword,dispatch,navigate])
+const handleSearch = useCallback(() => {
+  dispatch(setSearch(searchKeyword));
+  setSearchKeyword("");
+  setIsSearch(false);
+  navigate("/list");
+}, [searchKeyword, dispatch, navigate]);
 
   return (
     <Container $isOpen={isSearch}>
@@ -27,7 +26,7 @@ const Header = () => {
             <img height="100%" src='/search.png' alt='검색'/>
             <div className='hidden-txt'>검색</div>
           </SearchBtn>
-          <SearchInput onKeyDown={(e)=>{if(e.code==="Enter"){handleSearch(e)}}} onChange={(e)=>setSearchKeyword(e.target.value)} placeholder='검색어를 입력해주세요'/>
+          <SearchInput value={searchKeyword} onKeyDown={(e)=>{if(e.code==="Enter"){handleSearch()}}} onChange={(e)=>setSearchKeyword(e.target.value)} placeholder='검색어를 입력해주세요'/>
         </SearchBox>
         :
         <>
