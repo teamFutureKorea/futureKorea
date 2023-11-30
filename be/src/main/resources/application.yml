@@ -1,9 +1,17 @@
+server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store: /home/secure/letsencrypt.jks
+    key-store-password: Abcd1234@
+    key-password: Abcd1234@
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/futurekorea?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://laptop-gg:3306/futurekorea?serverTimezone=Asia/Seoul
     username: root
-    password: 1234
+    password: Abcd1234@
     hikari:
       maximumPoolSize: 3
   jpa:
