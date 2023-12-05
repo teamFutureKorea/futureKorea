@@ -1,10 +1,10 @@
-server:
-  port: 8080
-  ssl:
-    enabled: true
-    key-store: /home/secure/letsencrypt.jks
-    key-store-password: Abcd1234@
-    key-password: Abcd1234@
+# server:
+#   port: 8080
+#   ssl:
+#     enabled: true
+#     key-store: /home/secure/letsencrypt.jks
+#     key-store-password: Abcd1234@
+#     key-password: Abcd1234@
 
 spring:
   datasource:
