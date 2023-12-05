@@ -9,7 +9,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://3.35.236.107:3306/futurekorea?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://ip-172-31-4-92:3306/futurekorea?serverTimezone=Asia/Seoul
     username: root
     password: Abcd1234@
     hikari:
