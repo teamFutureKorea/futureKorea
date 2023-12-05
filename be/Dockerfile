@@ -1,16 +1,6 @@
-# Dockerfile
-
-# jdk17 Image Start
-FROM openjdk:17
-
-# 인자 설정 - JAR_File
-ARG JAR_FILE=build/libs/*.jar
-
-# jar 파일 복제
-COPY ${JAR_FILE} app.jarg
-
-# 인자 설정 부분과 jar 파일 복제 부분 합쳐서 진행해도 무방
-#COPY build/libs/*.jar app.jar
-
-# 실행 명령어
-ENTRYPOINT ["java", "-jar", "app.jar"]
+FROM openjdk:17-jdk-alpine
+VOLUME /tmp
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+EXPOSE 8080
