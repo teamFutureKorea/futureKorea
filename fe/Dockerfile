@@ -15,3 +15,5 @@ COPY . .
 
 # 애플리케이션을 빌드합니다.
 RUN npm run build
+
+CMD ["npm", "run", "start"]
